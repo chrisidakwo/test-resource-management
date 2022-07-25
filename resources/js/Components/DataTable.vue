@@ -11,6 +11,7 @@ export default {
             selectedRows: [],
             searchStr: '',
             openDisplayDropdown: false,
+            currentPage: 1,
             headings: [
                 {
                     key: 'title',
@@ -50,6 +51,27 @@ export default {
 
         updateOpenDisplayDropdown() {
             this.openDisplayDropdown = !this.openDisplayDropdown;
+        },
+
+        /**
+         * Update current page and emit onPageChanged event
+         * @param {string} page
+         */
+        updateCurrentPage(page) {
+            let newPage = this.currentPage;
+
+            if (page.indexOf('Next') >= 0) {
+                newPage = this.currentPage + 1;
+            } else if (page.indexOf('Previous') >= 0) {
+                newPage = this.currentPage - 1;
+            } else {
+                newPage = Number.parseInt(page);
+            }
+
+            if (newPage !== this.currentPage) {
+                this.currentPage = newPage;
+                this.$emit('onPageChanged', newPage);
+            }
         }
     },
 }
@@ -135,7 +157,7 @@ export default {
                 <thead>
                     <tr class="text-left">
                         <template v-for="heading in headings" :key="heading.key">
-                            <th class="bg-gray-100 sticky top-0 border-b border-gray-200 px-6 py-2 text-gray-600 font-bold tracking-wider uppercase text-xs"
+                            <th class="bg-gray-300 sticky top-0 border-b border-gray-200 px-6 py-2 text-gray-700 font-bold tracking-wider uppercase text-xs"
                                 :ref="heading.key" :class="{ [heading.key]: true }">
                                 {{ heading.value }}
                             </th>
@@ -172,7 +194,9 @@ export default {
                             :class="{ 'current': link.active }"
                             v-html="link.label"
                             v-if="null !== link.url"
-                            :title="'Page ' + link.label"/>
+                            :title="'Page ' + link.label"
+                            @click.prevent="updateCurrentPage(link.label)"
+                        />
                     </li>
                 </template>
             </ul>

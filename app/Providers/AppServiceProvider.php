@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Services\Contracts\ResourceService;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -23,6 +24,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        $this->app->bind(ResourceService::class, function () {
+            return new \App\Services\ResourceService();
+        });
     }
 }
