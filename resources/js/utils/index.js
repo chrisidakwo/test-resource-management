@@ -10,8 +10,9 @@ export const externalRedirect = (link) => {
 /**
  * Copy the given text to clipboard.
  *
- * @param {string} text
+ * @param text
+ * @returns {Promise<void>}
  */
 export const copyToClipboard = (text) => {
-
+    return navigator.clipboard.writeText(text);
 }

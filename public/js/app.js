@@ -20338,10 +20338,13 @@ var externalRedirect = function externalRedirect(link) {
 /**
  * Copy the given text to clipboard.
  *
- * @param {string} text
+ * @param text
+ * @returns {Promise<void>}
  */
 
-var copyToClipboard = function copyToClipboard(text) {};
+var copyToClipboard = function copyToClipboard(text) {
+  return navigator.clipboard.writeText(text);
+};
 
 /***/ }),
 
