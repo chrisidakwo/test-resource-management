@@ -19654,6 +19654,25 @@ __webpack_require__.r(__webpack_exports__);
         this.$emit('onPageChanged', newPage);
       }
     }
+  },
+  computed: {
+    /**
+     * Easily search through data, if search string exists. Else, return data as-is.
+     *
+     * @returns {*[]}
+     */
+    filteredData: function filteredData() {
+      var _this = this;
+
+      if (this.searchStr.length === 0) {
+        return this.data;
+      }
+
+      return this.data.filter(function (value) {
+        // Search only with the title
+        return value.title.toLowerCase().indexOf(_this.searchStr.toLowerCase()) > -1;
+      });
+    }
   }
 });
 
@@ -19937,7 +19956,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   /* KEYED_FRAGMENT */
   )), (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderSlot)(_ctx.$slots, "actionHeaders")])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tbody", null, [$props.data.length > 0 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, {
     key: 0
-  }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($props.data, function (row) {
+  }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($options.filteredData, function (row) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderSlot)(_ctx.$slots, "dataRow", {
       key: row.id,
       dataRow: row
@@ -20235,13 +20254,12 @@ var useResources = function useResources() {
 
             case 2:
               response = _context.sent;
-              console.log('resource', response);
               resources.value = {
                 data: response.data.data,
                 pagination: response.data.pagination
               };
 
-            case 5:
+            case 4:
             case "end":
               return _context.stop();
           }

@@ -74,6 +74,24 @@ export default {
             }
         }
     },
+
+    computed: {
+        /**
+         * Easily search through data, if search string exists. Else, return data as-is.
+         *
+         * @returns {*[]}
+         */
+        filteredData() {
+            if (this.searchStr.length === 0) {
+                return this.data;
+            }
+
+            return this.data.filter((value) => {
+                // Search only with the title
+                return value.title.toLowerCase().indexOf(this.searchStr.toLowerCase()) > -1
+            })
+        }
+    }
 }
 </script>
 
@@ -167,7 +185,7 @@ export default {
                 </thead>
 
                 <tbody>
-                    <template v-for="row in data" :key="row.id" v-if="data.length > 0">
+                    <template v-for="row in filteredData" :key="row.id" v-if="data.length > 0">
                         <slot name="dataRow" :dataRow="row"/>
                     </template>
                     <template v-else>

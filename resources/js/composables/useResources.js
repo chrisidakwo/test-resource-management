@@ -17,7 +17,6 @@ const useResources = () => {
      */
     const getResources = async (page) => {
         const response = await axios.get(`/api/resources?page=${page}`);
-        console.log('resource', response);
         resources.value = {
             data: response.data.data,
             pagination: response.data.pagination
