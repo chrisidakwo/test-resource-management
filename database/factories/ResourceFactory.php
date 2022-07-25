@@ -4,7 +4,6 @@ namespace Database\Factories;
 
 use App\Models\Resource;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Facades\Log;
 
 /**
  * @extends Factory<Resource>
@@ -25,28 +24,23 @@ class ResourceFactory extends Factory
 
     public function randomType(string $type): self
     {
-        Log::info('Resource type', [
-            'type' => $type,
-        ]);
-
         $properties = match ($type) {
             Resource::TYPE_HTML => [
-                'type' => 'html',
                 'description' => $this->faker->realText(),
                 'html_snippet' => $this->faker->randomHtml(6),
             ],
 
             Resource::TYPE_LINK => [
-                'type' => 'link',
                 'link' => $this->faker->url,
                 'link_target' => $this->faker->randomElement(['_parent', '_blank']),
             ],
 
             Resource::TYPE_PDF => [
-                'type' => 'pdf',
                 'file' => $this->faker->url,
             ],
         };
+
+        $properties['type'] = $type;
 
         return $this->state(fn ($attributes) => $properties);
     }

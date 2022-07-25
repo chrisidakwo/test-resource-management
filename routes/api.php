@@ -16,4 +16,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'resources'], function () {
    Route::get('/', [ResourceController::class, 'index']);
+   Route::post('/create', [ResourceController::class, 'store']);
+   Route::get('/{resource}', [ResourceController::class, 'view']);
+   Route::get('/{resource}/download', [ResourceController::class, 'download']);
+   Route::put('/{resource}', [ResourceController::class, 'update']);
+   Route::delete('/{resource}', [ResourceController::class, 'delete']);
 });

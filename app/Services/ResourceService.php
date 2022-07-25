@@ -3,34 +3,131 @@
 namespace App\Services;
 
 use App\Models\Resource;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Pagination\AbstractPaginator;
+use Illuminate\Support\Facades\Storage;
+use RuntimeException;
 
 class ResourceService implements Contracts\ResourceService
 {
     /**
-     * @param int $page
-     * @param int $limit
-     * @return Collection
+     * @inheritDoc
      */
-    public function list(int $page, int $limit = 20): Collection
+    public function listResources(int $page, int $limit = 20): AbstractPaginator
     {
-        $resources = Resource::query()
+        $limit = ($limit > 50) ? 50 : $limit;
+
+        return Resource::query()
             ->latest()
-            ->paginate($limit, ['*'], 'page', $page)
-            ->toArray();
-
-        $resourcesData = $resources['data'];
-        unset($resources['data']);
-
-        return collect([
-            'data' => $resourcesData,
-            'pagination' => $resources
-        ]);
+            ->paginate($limit, ['*'], 'page', $page);
     }
 
-    public function search(string $query): Collection
+    /**
+     * @inheritDoc
+     */
+    public function createResource(string $type, array $data): Model|Resource
     {
-        // TODO: Implement search() method.
+        $properties = $this->getPropertiesByResourceType($type, $data);
+
+        $resource = Resource::query()->create($properties);
+
+        if ($type === Resource::TYPE_PDF) {
+            $resource->file = $this->handlePdfUpload($data['file'], $resource->id);
+            $resource->save();
+        }
+
+        return $resource;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function viewResource(string $resourceId): Resource
+    {
+        return $this->findResource($resourceId);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function updateResource(string $resourceId, array $data): Resource
+    {
+        $resource = $this->findResource($resourceId)->fill($data);
+
+        if ($resource->type === Resource::TYPE_PDF && array_key_exists('file', $data)) {
+            $resource->file = $this->handlePdfUpload($data['file'], $resource->id);
+        }
+
+        $resource->save();
+
+        return $resource;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function deleteResource(string $resourceId): ?bool
+    {
+        return $this->findResource($resourceId)->delete();
+    }
+
+    /**
+     * Find a resource where it exists. Else, throw a RuntimeException.
+     *
+     * @param string $resourceId
+     * @return Model|Resource
+     */
+    protected function findResource(string $resourceId): Model|Resource
+    {
+        try {
+            $resource = Resource::query()->where([
+                'id' => $resourceId
+            ])->firstOrFail();
+        } catch (ModelNotFoundException $ex) {
+            throw new RuntimeException('Could not find resource', $ex->getCode(), $ex);
+        }
+
+        return $resource;
+    }
+
+    /**
+     * @param string $type
+     * @param array $data
+     * @return array
+     */
+    protected function getPropertiesByResourceType(string $type, array $data): array
+    {
+        $properties = match ($type) {
+            Resource::TYPE_HTML => [
+                'description' => $data['description'] ?? null,
+                'html_snippet' => $data['html_snippet'],
+            ],
+
+            Resource::TYPE_PDF => [
+                'file' => $data['file'],
+            ],
+
+            Resource::TYPE_LINK => [
+                'link' => $data['link'],
+                'link_target' => $data['link_target'] ?? '_parent',
+            ],
+        };
+
+        $properties['title'] = $data['title'];
+        $properties['type'] = $type;
+
+        return $properties;
+    }
+
+    /**
+     * @param UploadedFile $file
+     * @param int $resourceId
+     * @return string
+     */
+    protected function handlePdfUpload(UploadedFile $file, int $resourceId): string
+    {
+        return Storage::disk('resources')->putFile("/$resourceId", $file);
     }
 }

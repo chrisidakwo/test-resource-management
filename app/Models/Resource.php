@@ -15,7 +15,12 @@ class Resource extends Model
     public const TYPE_LINK = 'link';
     public const TYPE_PDF = 'pdf';
 
-    protected $hidden = ['created_at', 'updated_at'];
+    /**
+     * The attributes that aren't mass assignable.
+     *
+     * @var array<string>|bool
+     */
+    protected $guarded = [];
 
     /**
      * @return ResourceFactory
@@ -23,6 +28,18 @@ class Resource extends Model
     protected static function newFactory(): ResourceFactory
     {
         return ResourceFactory::new();
+    }
+
+    /**
+     * @return string[]
+     */
+    public static function getTypes(): array
+    {
+        return [
+            self::TYPE_HTML,
+            self::TYPE_LINK,
+            self::TYPE_PDF,
+        ];
     }
 
     /**

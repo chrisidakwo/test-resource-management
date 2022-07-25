@@ -12,6 +12,7 @@ export default {
             searchStr: '',
             openDisplayDropdown: false,
             currentPage: 1,
+            activeHeaders: [],
             headings: [
                 {
                     key: 'title',
@@ -20,6 +21,10 @@ export default {
                 {
                     key: 'type',
                     value: 'Resource Type',
+                },
+                {
+                    key: 'description',
+                    value: 'Description',
                 },
                 {
                     key: 'link',
@@ -42,6 +47,17 @@ export default {
                 [].forEach.call(columns, column => column.classList.remove('hidden'));
             } else {
                 [].forEach.call(columns, column => column.classList.add('hidden'));
+            }
+
+            const header = this.headings.filter((heading) => heading.key === key)[0];
+
+            const activeHeader = this.activeHeaders.filter((heading) => heading.key === header.key);
+            if (activeHeader.length > 0) {
+                // Remove from active headers
+                this.activeHeaders = this.activeHeaders.filter((heading) => heading.key !== key);
+            } else {
+                // Add to active headers
+                this.activeHeaders = this.activeHeaders.concat(header);
             }
         },
 
@@ -74,7 +90,9 @@ export default {
             }
         }
     },
-
+    mounted() {
+        this.activeHeaders = this.headings;
+    },
     computed: {
         /**
          * Easily search through data, if search string exists. Else, return data as-is.
@@ -175,7 +193,7 @@ export default {
                 <thead>
                     <tr class="text-left">
                         <template v-for="heading in headings" :key="heading.key">
-                            <th class="bg-gray-300 sticky top-0 border-b border-gray-200 px-6 py-2 text-gray-700 font-bold tracking-wider uppercase text-xs"
+                            <th class="bg-gray-300 sticky top-0 border-b border-gray-200 px-8 py-2 text-gray-700 font-bold tracking-wider uppercase text-xs"
                                 :ref="heading.key" :class="{ [heading.key]: true }">
                                 {{ heading.value }}
                             </th>
@@ -186,7 +204,7 @@ export default {
 
                 <tbody>
                     <template v-for="row in filteredData" :key="row.id" v-if="data.length > 0">
-                        <slot name="dataRow" :dataRow="row"/>
+                        <slot name="dataRow" :dataRow="row" :activeHeaders="activeHeaders" />
                     </template>
                     <template v-else>
                         <tr>

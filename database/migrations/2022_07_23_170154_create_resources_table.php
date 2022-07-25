@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('resources', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
+            $table->string('title')->unique();
             $table->enum('type', ['html', 'link', 'pdf'])->index();
             $table->longText('description')->nullable();
             $table->longText('html_snippet')->nullable();

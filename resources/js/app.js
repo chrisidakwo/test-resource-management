@@ -1,6 +1,4 @@
-require('./bootstrap');
-
-import { createApp } from "vue";
+import {createApp} from "vue";
 import HomePage from "./Components/Pages/Home/Index";
 
 const app = createApp({});
