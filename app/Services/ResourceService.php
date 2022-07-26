@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Resource;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\File;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Pagination\AbstractPaginator;
 use Illuminate\Support\Facades\Storage;
@@ -124,11 +125,11 @@ class ResourceService implements Contracts\ResourceService
     }
 
     /**
-     * @param UploadedFile $file
+     * @param UploadedFile|File $file
      * @param int $resourceId
      * @return string
      */
-    protected function handlePdfUpload(UploadedFile $file, int $resourceId): string
+    protected function handlePdfUpload(File|UploadedFile $file, int $resourceId): string
     {
         return Storage::disk('public')->putFile("/resources/$resourceId", $file);
     }

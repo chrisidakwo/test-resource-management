@@ -6,6 +6,7 @@ use App\Models\Resource;
 use App\Services\Contracts\ResourceService;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Http\File;
 use Tests\TestCase;
 
 class ResourceServiceTest extends TestCase
@@ -45,5 +46,19 @@ class ResourceServiceTest extends TestCase
         self::assertInstanceOf(Resource::class, $resource);
         self::assertEquals('link', $resource->type);
         self::assertEquals('_blank', $resource->link_target);
+    }
+
+    public function testItCreatesNewPdfResource(): void
+    {
+        $data = [
+            'type' => Resource::TYPE_PDF,
+            'title' => $this->faker->text(50),
+            'file' => new File(base_path('tests/table.pdf'), true),
+        ];
+
+        $resource = $this->resourceService->createResource($data['type'], $data);
+
+        self::assertNotEmpty($resource->file);
+        self::assertInstanceOf(Resource::class, $resource);
     }
 }
