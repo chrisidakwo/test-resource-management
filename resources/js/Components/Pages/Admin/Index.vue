@@ -237,8 +237,6 @@ const handleFormSubmit = (data) => {
                 summary: errorMessage,
                 errors: errors,
             };
-
-            console.log('submitErrorMessage', submitErrorMessage.value);
         }
     })
 }

@@ -43,7 +43,7 @@
 
         <div class="mb-4" v-if="type.value === 'link'">
             <div class="flex items-center mb-4">
-                <input id="default-link_target" v-model="link_target.value" type="checkbox" class="form-checkbox">
+                <input id="default-link_target" type="checkbox" class="form-checkbox" v-model="link_target">
                 <label for="link_target" class="ml-2 font-medium text-gray-900">Open link in a new tab</label>
             </div>
         </div>
@@ -222,7 +222,7 @@ const submitForm = () => {
     } else if (type.value === 'link') {
         data.link = link.value;
 
-        if (undefined === link_target.value) {
+        if (true !== link_target.value) {
             data.link_target = '_parent';
         } else {
             data.link_target = "_blank";
@@ -230,9 +230,6 @@ const submitForm = () => {
     } else if (type.value === 'pdf') {
         data.file = file.value;
     }
-
-    console.log('link_target', link_target.value);
-    return;
 
     emit('onFormSubmit', data);
 }

@@ -19956,7 +19956,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       } else if (type.value === 'link') {
         data.link = link.value;
 
-        if (undefined === link_target.value) {
+        if (true !== link_target.value) {
           data.link_target = '_parent';
         } else {
           data.link_target = "_blank";
@@ -19965,8 +19965,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         data.file = file.value;
       }
 
-      console.log('link_target', link_target.value);
-      return;
       emit('onFormSubmit', data);
     };
     /**
@@ -20246,7 +20244,6 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
             summary: errorMessage,
             errors: errors
           };
-          console.log('submitErrorMessage', submitErrorMessage.value);
         }
       });
     };
@@ -20886,14 +20883,14 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   /* TEXT */
   )) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), $setup.type.value === 'link' ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_14, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_15, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
     id: "default-link_target",
-    "onUpdate:modelValue": _cache[3] || (_cache[3] = function ($event) {
-      return $setup.link_target.value = $event;
-    }),
     type: "checkbox",
-    "class": "form-checkbox"
+    "class": "form-checkbox",
+    "onUpdate:modelValue": _cache[3] || (_cache[3] = function ($event) {
+      return $setup.link_target = $event;
+    })
   }, null, 512
   /* NEED_PATCH */
-  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelCheckbox, $setup.link_target.value]]), _hoisted_16])])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_17, [_hoisted_18, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelCheckbox, $setup.link_target]]), _hoisted_16])])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_17, [_hoisted_18, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
     "class": "form-file",
     "aria-describedby": "pdf_help",
     id: "pdf_file",
