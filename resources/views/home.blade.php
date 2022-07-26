@@ -1,6 +1,6 @@
 @extends('layout')
 
-@section('header', 'Resource Management')
+@section('header', 'Resources')
 
 @section('content')
     <home-page/>

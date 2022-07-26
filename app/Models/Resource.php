@@ -23,6 +23,13 @@ class Resource extends Model
     protected $guarded = [];
 
     /**
+     * Indicates if all mass assignment is enabled.
+     *
+     * @var bool
+     */
+    protected static $unguarded = true;
+
+    /**
      * @return ResourceFactory
      */
     protected static function newFactory(): ResourceFactory

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreResourceRequest;
+use App\Http\Requests\UpdateResourceRequest;
 use App\Http\Resources\ResourceDataCollection;
 use App\Http\Resources\ResourceDataResource;
 use App\Services\Contracts\ResourceService;
@@ -68,13 +69,13 @@ class ResourceController extends Controller
     }
 
     /**
-     * @param Request $request
+     * @param UpdateResourceRequest $request
      * @param string $resourceId
      * @return JsonResponse
      */
-    public function update(Request $request, string $resourceId): JsonResponse
+    public function update(UpdateResourceRequest $request, string $resourceId): JsonResponse
     {
-        $resource = $this->resourceService->updateResource($resourceId, $request->all());
+        $resource = $this->resourceService->updateResource($resourceId, $request->except(['_method', 'type']));
 
         return (new ResourceDataResource($resource))->toResponse($request);
     }

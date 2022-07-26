@@ -1,17 +1,18 @@
-import {ref} from "vue";
-import {apiClient as axios} from '../utils/api';
+import { reactive } from "vue";
+import apiClient from '../utils/api';
 
 const useResources = () => {
     /**
      * Holds resources data and pagination information.
-     *
      */
-    const resources = ref({
+    const resources = reactive({
         data: [],
         pagination: {},
     });
 
-    const resourceData = ref({});
+    const resourceData = reactive({
+        data: {}
+    });
 
     /**
      * Return a list of resources with pagination information.
@@ -19,11 +20,9 @@ const useResources = () => {
      * @returns {Promise<void>}
      */
     const getResources = async (page) => {
-        const response = await axios.get(`/api/resources?page=${page}`);
-        resources.value = {
-            data: response.data.data,
-            pagination: response.data.pagination
-        }
+        const response = await apiClient.get(`/api/resources?page=${page}`);
+        resources.data = response.data.data;
+        resources.pagination = response.data.pagination;
     };
 
     /**
@@ -33,9 +32,9 @@ const useResources = () => {
      * @returns {Promise<AxiosResponse<any>>}
      */
     const createResource = async (data) => {
-        const response = await axios.post('/api/resources', data);
+        const response = await apiClient.post('/api/resources', data);
 
-        resourceData.value = response.data;
+        resourceData.data = response.data;
     }
 
     /**
@@ -45,7 +44,22 @@ const useResources = () => {
      * @returns {Promise<void>}
      */
     const downloadResource = async (resourceId) => {
-        await axios.get(`/api/resources/${resourceId}/download`);
+        await apiClient.get(`/api/resources/${resourceId}/download`);
+    }
+
+    /**
+     * Delete resource.
+     *
+     * @param {string} resourceId
+     * @param {Object} data
+     * @returns {Promise<AxiosResponse<any>>}
+     */
+    const updateResource = async (resourceId, data) => {
+        return await apiClient.post(`/api/resources/${resourceId}`, data, {
+            headers: {
+                'content-type': 'multipart/form-data',
+            }
+        });
     }
 
     /**
@@ -55,10 +69,10 @@ const useResources = () => {
      * @returns {Promise<AxiosResponse<any>>}
      */
     const deleteResource = async (resourceId) => {
-        return await axios.delete(`/api/resources/${resourceId}`);
+        return await apiClient.delete(`/api/resources/${resourceId}`);
     }
 
-    return { resources, getResources, downloadResource, deleteResource };
+    return { resources, resourceData, getResources, downloadResource, updateResource, deleteResource };
 }
 
 export default useResources;

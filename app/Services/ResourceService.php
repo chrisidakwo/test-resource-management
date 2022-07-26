@@ -54,13 +54,15 @@ class ResourceService implements Contracts\ResourceService
      */
     public function updateResource(string $resourceId, array $data): Resource
     {
-        $resource = $this->findResource($resourceId)->fill($data);
+        $resource = $this->findResource($resourceId);
 
         if ($resource->type === Resource::TYPE_PDF && array_key_exists('file', $data)) {
             $resource->file = $this->handlePdfUpload($data['file'], $resource->id);
+
+            unset($data['file']);
         }
 
-        $resource->save();
+        $resource->fill($data)->save();
 
         return $resource;
     }
@@ -128,6 +130,6 @@ class ResourceService implements Contracts\ResourceService
      */
     protected function handlePdfUpload(UploadedFile $file, int $resourceId): string
     {
-        return Storage::disk('resources')->putFile("/$resourceId", $file);
+        return Storage::disk('public')->putFile("/resources/$resourceId", $file);
     }
 }

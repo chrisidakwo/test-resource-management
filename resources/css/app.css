@@ -15,11 +15,19 @@
 }
 
 .btn-primary {
-    @apply text-white bg-cyan-600 hover:bg-cyan-700 dark:bg-cyan-600 dark:hover:bg-cyan-700 transition ease-in-out duration-150
+    @apply text-white bg-cyan-600 hover:bg-cyan-700 dark:bg-cyan-600 dark:hover:bg-cyan-700 transition ease-in-out
+}
+
+.btn-white {
+    @apply text-cyan-600 bg-white hover:bg-cyan-900 hover:text-white transition
 }
 
 .btn-nude {
-    @apply font-semibold text-cyan-600 hover:text-cyan-800 hover:bg-cyan-50 py-1 transition ease-in-out duration-150
+    @apply font-semibold text-cyan-600 hover:text-cyan-800 hover:bg-cyan-50 py-1 transition ease-in-out
+}
+
+.btn-sm {
+    @apply py-1 px-3 text-sm
 }
 
 .section {
@@ -52,3 +60,22 @@
     @apply text-gray-500 hover:text-gray-500
 }
 
+.form-input {
+    @apply block w-full p-2.5 placeholder-gray-400 border border-gray-300 rounded-md shadow-sm appearance-none focus:outline-none focus:ring-cyan-500 focus:border-cyan-500
+}
+
+.form-input.error {
+    @apply border-red-600 focus:ring-red-600 focus:border-red-600
+}
+
+.form-select {
+    @apply block w-full p-2.5 placeholder-gray-400 border border-gray-300 rounded-md shadow-sm appearance-none focus:outline-none focus:ring-cyan-500 focus:border-cyan-500
+}
+
+.form-checkbox {
+    @apply w-5 h-5 text-cyan-600 rounded border-gray-400 focus:ring-cyan-500
+}
+
+.form-file {
+    @apply block w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 cursor-pointer
+}

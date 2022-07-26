@@ -21,6 +21,8 @@
         "vue-loader": "^16.8.3"
     },
     "dependencies": {
-        "vue": "^3.2.37"
+        "vue": "^3.2.37",
+        "vue-froala-wysiwyg": "^4.0.13",
+        "vue-hooks-form": "^0.2.2"
     }
 }

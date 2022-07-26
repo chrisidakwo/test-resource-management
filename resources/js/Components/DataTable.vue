@@ -1,10 +1,28 @@
 <script>
-
 export default {
     props: {
-        data: Array,
-        pagination: Object,
-        maxHeight: String | undefined,
+        data: {
+            type: Array,
+            required: true,
+        },
+        pagination: {
+            type: Object,
+            required: true,
+        },
+        maxHeight: {
+            type: String,
+            required: true,
+        },
+        useCheckbox: {
+            type: Boolean,
+            required: false,
+            default: false,
+        },
+        selectedRowsProp: {
+            type: Array,
+            required: false,
+            default: [],
+        }
     },
     data() {
         return {
@@ -39,6 +57,11 @@ export default {
         }
     },
     methods: {
+        /**
+         * Hide or show table columns.
+         *
+         * @param {string} key
+         */
         toggleColumn(key) {
             // Note: All td must have the same class name as the headings key!
             let columns = document.getElementsByClassName(key);
@@ -61,10 +84,9 @@ export default {
             }
         },
 
-        tableSearch(event) {
-            this.searchStr = event.target.value;
-        },
-
+        /**
+         * Open or close table column display dropdown.
+         */
         updateOpenDisplayDropdown() {
             this.openDisplayDropdown = !this.openDisplayDropdown;
         },
@@ -88,10 +110,63 @@ export default {
                 this.currentPage = newPage;
                 this.$emit('onPageChanged', newPage);
             }
+        },
+
+        /**
+         * Handle global checkbox click event.
+         *
+         * @param {MouseEvent} $event
+         */
+        selectAllCheckbox($event) {
+            let columns = document.querySelectorAll('.rowCheckbox');
+
+            this.selectedRows = [];
+
+            if ($event.target.checked) {
+                columns.forEach(column => {
+                    column.checked = true
+                    this.selectedRows = this.selectedRows.concat(parseInt(column.name))
+                });
+            } else {
+                columns.forEach(column => {
+                    column.checked = false
+                });
+
+                this.selectedRows = [];
+            }
+
+            this.$emit('onSelectedAllRows', this.selectedRows);
+        },
+
+        /**
+         * Dispatch onEditRow event.
+         *
+         * @param {int} selectedRow
+         * @param {Array<*>} filteredData
+         */
+        editRow(selectedRow, filteredData) {
+            let data = filteredData.filter((data) => data.id === selectedRow);
+            if (data.length > 0) {
+                this.$emit('onEditRow', {
+                    row: selectedRow,
+                    data: data[0],
+                });
+            }
+        },
+
+        /**
+         * Dispatch onDeleteRows event
+         *
+         * @param {Array<int>} selectedRows
+         */
+        deleteRows(selectedRows) {
+            this.$emit('onDeleteRows', selectedRows);
         }
     },
     mounted() {
         this.activeHeaders = this.headings;
+
+        this.selectedRows = this.selectedRowsProp;
     },
     computed: {
         /**
@@ -108,6 +183,17 @@ export default {
                 // Search only with the title
                 return value.title.toLowerCase().indexOf(this.searchStr.toLowerCase()) > -1
             })
+        },
+
+        /**
+         * @returns {[]}
+         */
+        getSelectedRows() {
+            if (this.selectedRowsProp.length !== this.selectedRows.length) {
+                this.selectedRows = this.selectedRowsProp;
+            }
+
+            return this.selectedRows;
         }
     }
 }
@@ -115,27 +201,22 @@ export default {
 
 <template>
     <div class="container mx-auto py-6">
-        <div v-if="selectedRows.length > 0" class="bg-teal-200 z-40 w-full shadow">
+        <!-- Table actions -->
+        <div v-if="useCheckbox && getSelectedRows.length > 0" class="bg-cyan-600 z-40 w-full rounded-md shadow mb-4">
             <div class="container mx-auto px-4 py-4">
-                <div class="flex md:items-center">
-                    <div class="mr-4 flex-shrink-0">
-                        <svg class="h-8 w-8 text-teal-600"  viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
-                        </svg>
-                    </div>
-                    <div class="text-teal-800 text-lg">
-                        {{ selectedRows.length }} rows are selected
-                    </div>
+                <div class="flex md:items-center text-white">
+                    <button class="btn btn-white mr-3" v-if="getSelectedRows.length === 1" @click="editRow(getSelectedRows[0], filteredData)">Edit</button>
+                    <button class="btn btn-white" type="button" @click="deleteRows(getSelectedRows)">Delete</button>
                 </div>
             </div>
         </div>
 
         <div class="mb-4 flex justify-between items-center">
-            <div class="flex-1">
+            <div class="flex-1 mr-3">
                 <div class="relative md:w-1/3">
                     <input type="search"
                            class="w-full border-gray-200 pl-10 pr-4 py-2 rounded-md shadow focus:outline-none focus:shadow-outline text-gray-600 font-medium"
-                           placeholder="Search..." @input="event => tableSearch(event)">
+                           placeholder="Search..." v-model="searchStr">
 
                     <div class="absolute top-0 left-0 inline-flex items-center p-2 cursor-pointer">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-400" viewBox="0 0 24 24"
@@ -192,6 +273,12 @@ export default {
             <table class="border-collapse table-auto w-full whitespace-no-wrap bg-white table-striped relative">
                 <thead>
                     <tr class="text-left">
+                        <th class="py-2 px-3 sticky top-0 border-b border-gray-200 bg-gray-300" v-show="useCheckbox">
+                            <label
+                                class="text-teal-500 inline-flex justify-between items-center hover:bg-gray-200 px-2 py-2 rounded-lg cursor-pointer">
+                                <input type="checkbox" class="form-checkbox focus:outline-none focus:shadow-outline" @click="selectAllCheckbox($event);">
+                            </label>
+                        </th>
                         <template v-for="heading in headings" :key="heading.key">
                             <th class="bg-gray-300 sticky top-0 border-b border-gray-200 px-8 py-2 text-gray-700 font-bold tracking-wider uppercase text-xs"
                                 :ref="heading.key" :class="{ [heading.key]: true }">
@@ -204,7 +291,7 @@ export default {
 
                 <tbody>
                     <template v-for="row in filteredData" :key="row.id" v-if="data.length > 0">
-                        <slot name="dataRow" :dataRow="row" :activeHeaders="activeHeaders" />
+                        <slot name="dataRow" :dataRow="row" :activeHeaders="activeHeaders" :selectedRows="selectedRows" />
                     </template>
                     <template v-else>
                         <tr>

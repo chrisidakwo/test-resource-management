@@ -82,7 +82,7 @@ import {onMounted, ref} from "vue";
 import {copyToClipboard, externalRedirect} from "../../../utils";
 
 // Composables
-const { resources, getResources, deleteResource, downloadResource } = useResources();
+const { resources, getResources, downloadResource } = useResources();
 
 // Properties
 const page = ref('1');
@@ -127,16 +127,6 @@ const handlePageChanged = (newPage) => {
  */
 const download = (resourceId) => {
 
-}
-
-const destroyResource = (resourceId) => {
-    if (!window.confirm('Are you sure you want to lose this record?')) {
-        return;
-    }
-
-    deleteResource(resourceId).then((response) => {
-        getResources(page.value);
-    });
 }
 </script>
 

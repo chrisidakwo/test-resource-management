@@ -5,6 +5,7 @@ namespace App\Http\Resources;
 use App\Models\Resource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 class ResourceDataResource extends JsonResource
 {
@@ -31,7 +32,7 @@ class ResourceDataResource extends JsonResource
             'htmlSnippet' => $this->html_snippet,
             'link' => $this->link,
             'linkTarget' => $this->link_target,
-            'file' => $this->file,
+            'file' => $this->file ? asset("storage/$this->file"): $this->file,
         ];
     }
 }
