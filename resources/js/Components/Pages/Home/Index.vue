@@ -50,8 +50,7 @@
                 <td class="border-dashed border-t border-gray-200 file" v-if="hasHeader(activeHeaders, 'file')">
                     <span class="text-gray-700 px-6 py-3 flex items-center">
                         <template v-if="dataRow.file">
-                            <a :href="dataRow.file"
-                               @click.prevent="download(dataRow.id)"
+                            <a :href="dataRow.file" target="_blank"
                                class="underline text-cyan-600 active:text-cyan-800">
                                 Download PDF
                             </a>
@@ -82,7 +81,7 @@ import {onMounted, ref} from "vue";
 import {copyToClipboard, externalRedirect} from "../../../utils";
 
 // Composables
-const { resources, getResources, downloadResource } = useResources();
+const { resources, getResources } = useResources();
 
 // Properties
 const page = ref('1');
@@ -118,15 +117,6 @@ const handlePageChanged = (newPage) => {
 
     // Refetch resources
     getResources(newPage.toString());
-}
-
-/**
- * Download a resource's PDF file.
- *
- * @param {string} resourceId
- */
-const download = (resourceId) => {
-
 }
 </script>
 

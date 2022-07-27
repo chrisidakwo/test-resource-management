@@ -37,16 +37,6 @@ const useResources = () => {
     }
 
     /**
-     * Download a resource's file.
-     *
-     * @param resourceId
-     * @returns {Promise<void>}
-     */
-    const downloadResource = async (resourceId) => {
-        await apiClient.get(`/api/resources/${resourceId}/download`);
-    }
-
-    /**
      * Delete resource.
      *
      * @param {string} resourceId

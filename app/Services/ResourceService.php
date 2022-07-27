@@ -80,14 +80,15 @@ class ResourceService implements Contracts\ResourceService
      * Find a resource where it exists. Else, throw a RuntimeException.
      *
      * @param string $resourceId
+     * @param array $find
      * @return Model|Resource
      */
-    protected function findResource(string $resourceId): Model|Resource
+    public function findResource(string $resourceId, array $find = []): Model|Resource
     {
         try {
-            $resource = Resource::query()->where([
+            $resource = Resource::query()->where(array_merge([
                 'id' => $resourceId
-            ])->firstOrFail();
+            ], $find))->firstOrFail();
         } catch (ModelNotFoundException $ex) {
             throw new RuntimeException('Could not find resource', $ex->getCode(), $ex);
         }

@@ -19843,8 +19843,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
         getResources = _useResources.getResources,
         createResource = _useResources.createResource,
         updateResource = _useResources.updateResource,
-        deleteResources = _useResources.deleteResources,
-        downloadResource = _useResources.downloadResource; // Properties
+        deleteResources = _useResources.deleteResources; // Properties
 
 
     var _useState = (0,_composables_useState__WEBPACK_IMPORTED_MODULE_5__.useState)('1'),
@@ -20000,14 +19999,6 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
         });
       }
     };
-    /**
-     * Download a resource's PDF file.
-     *
-     * @param {string} resourceId
-     */
-
-
-    var download = function download(resourceId) {};
 
     var handleDestroyResources = function handleDestroyResources(resources) {
       if (!window.confirm('Are you sure you want to lose these records?')) {
@@ -20027,7 +20018,6 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
       createResource: createResource,
       updateResource: updateResource,
       deleteResources: deleteResources,
-      downloadResource: downloadResource,
       page: page,
       setPage: setPage,
       selectedRows: selectedRows,
@@ -20045,7 +20035,6 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
       openCreateForm: openCreateForm,
       handleEditResource: handleEditResource,
       handleFormSubmit: handleFormSubmit,
-      download: download,
       handleDestroyResources: handleDestroyResources,
       DataTable: _DataTable__WEBPACK_IMPORTED_MODULE_0__["default"],
       Copy: _icons_copy__WEBPACK_IMPORTED_MODULE_1__["default"],
@@ -20356,8 +20345,7 @@ __webpack_require__.r(__webpack_exports__);
 
     var _useResources = (0,_composables_useResources__WEBPACK_IMPORTED_MODULE_2__["default"])(),
         resources = _useResources.resources,
-        getResources = _useResources.getResources,
-        downloadResource = _useResources.downloadResource; // Properties
+        getResources = _useResources.getResources; // Properties
 
 
     var page = (0,vue__WEBPACK_IMPORTED_MODULE_3__.ref)('1'); // Component hooks
@@ -20397,24 +20385,14 @@ __webpack_require__.r(__webpack_exports__);
 
       getResources(newPage.toString());
     };
-    /**
-     * Download a resource's PDF file.
-     *
-     * @param {string} resourceId
-     */
-
-
-    var download = function download(resourceId) {};
 
     var __returned__ = {
       resources: resources,
       getResources: getResources,
-      downloadResource: downloadResource,
       page: page,
       copy: copy,
       hasHeader: hasHeader,
       handlePageChanged: handlePageChanged,
-      download: download,
       DataTable: _DataTable__WEBPACK_IMPORTED_MODULE_0__["default"],
       Copy: _icons_copy__WEBPACK_IMPORTED_MODULE_1__["default"],
       useResources: _composables_useResources__WEBPACK_IMPORTED_MODULE_2__["default"],
@@ -20743,7 +20721,7 @@ var _hoisted_17 = {
 var _hoisted_18 = {
   "class": "text-gray-700 px-6 py-3 flex items-center"
 };
-var _hoisted_19 = ["href", "onClick"];
+var _hoisted_19 = ["href"];
 var _hoisted_20 = {
   "class": "border-dashed border-t border-gray-200"
 };
@@ -20872,9 +20850,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       )) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), $setup.hasHeader(activeHeaders, 'file') ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("td", _hoisted_17, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_18, [dataRow.file ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("a", {
         key: 0,
         href: dataRow.file,
-        onClick: (0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)(function ($event) {
-          return $setup.download(dataRow.id);
-        }, ["prevent"]),
+        target: "_blank",
         "class": "underline text-cyan-600 active:text-cyan-800"
       }, " Download PDF ", 8
       /* PROPS */
@@ -21261,7 +21237,7 @@ var _hoisted_12 = {
 var _hoisted_13 = {
   "class": "text-gray-700 px-6 py-3 flex items-center"
 };
-var _hoisted_14 = ["href", "onClick"];
+var _hoisted_14 = ["href"];
 var _hoisted_15 = {
   "class": "border-dashed border-t border-gray-200"
 };
@@ -21321,9 +21297,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       )) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), $setup.hasHeader(activeHeaders, 'file') ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("td", _hoisted_12, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_13, [dataRow.file ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("a", {
         key: 0,
         href: dataRow.file,
-        onClick: (0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)(function ($event) {
-          return $setup.download(dataRow.id);
-        }, ["prevent"]),
+        target: "_blank",
         "class": "underline text-cyan-600 active:text-cyan-800"
       }, " Download PDF ", 8
       /* PROPS */
@@ -21507,35 +21481,6 @@ var useResources = function useResources() {
     };
   }();
   /**
-   * Download a resource's file.
-   *
-   * @param resourceId
-   * @returns {Promise<void>}
-   */
-
-
-  var downloadResource = /*#__PURE__*/function () {
-    var _ref3 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(resourceId) {
-      return _regeneratorRuntime().wrap(function _callee3$(_context3) {
-        while (1) {
-          switch (_context3.prev = _context3.next) {
-            case 0:
-              _context3.next = 2;
-              return _utils_api__WEBPACK_IMPORTED_MODULE_1__["default"].get("/api/resources/".concat(resourceId, "/download"));
-
-            case 2:
-            case "end":
-              return _context3.stop();
-          }
-        }
-      }, _callee3);
-    }));
-
-    return function downloadResource(_x3) {
-      return _ref3.apply(this, arguments);
-    };
-  }();
-  /**
    * Delete resource.
    *
    * @param {string} resourceId
@@ -21545,17 +21490,49 @@ var useResources = function useResources() {
 
 
   var updateResource = /*#__PURE__*/function () {
-    var _ref4 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4(resourceId, data) {
-      return _regeneratorRuntime().wrap(function _callee4$(_context4) {
+    var _ref3 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(resourceId, data) {
+      return _regeneratorRuntime().wrap(function _callee3$(_context3) {
         while (1) {
-          switch (_context4.prev = _context4.next) {
+          switch (_context3.prev = _context3.next) {
             case 0:
-              _context4.next = 2;
+              _context3.next = 2;
               return _utils_api__WEBPACK_IMPORTED_MODULE_1__["default"].post("/api/resources/".concat(resourceId), data, {
                 headers: {
                   'content-type': 'multipart/form-data'
                 }
               });
+
+            case 2:
+              return _context3.abrupt("return", _context3.sent);
+
+            case 3:
+            case "end":
+              return _context3.stop();
+          }
+        }
+      }, _callee3);
+    }));
+
+    return function updateResource(_x3, _x4) {
+      return _ref3.apply(this, arguments);
+    };
+  }();
+  /**
+   * Delete resource.
+   *
+   * @param {string[]} resourceId
+   * @returns {Promise<AxiosResponse<any>>}
+   */
+
+
+  var deleteResources = /*#__PURE__*/function () {
+    var _ref4 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4(resources) {
+      return _regeneratorRuntime().wrap(function _callee4$(_context4) {
+        while (1) {
+          switch (_context4.prev = _context4.next) {
+            case 0:
+              _context4.next = 2;
+              return _utils_api__WEBPACK_IMPORTED_MODULE_1__["default"]["delete"]("/api/resources?resources=".concat(resources.join(',')));
 
             case 2:
               return _context4.abrupt("return", _context4.sent);
@@ -21568,40 +21545,8 @@ var useResources = function useResources() {
       }, _callee4);
     }));
 
-    return function updateResource(_x4, _x5) {
+    return function deleteResources(_x5) {
       return _ref4.apply(this, arguments);
-    };
-  }();
-  /**
-   * Delete resource.
-   *
-   * @param {string[]} resourceId
-   * @returns {Promise<AxiosResponse<any>>}
-   */
-
-
-  var deleteResources = /*#__PURE__*/function () {
-    var _ref5 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5(resources) {
-      return _regeneratorRuntime().wrap(function _callee5$(_context5) {
-        while (1) {
-          switch (_context5.prev = _context5.next) {
-            case 0:
-              _context5.next = 2;
-              return _utils_api__WEBPACK_IMPORTED_MODULE_1__["default"]["delete"]("/api/resources?resources=".concat(resources.join(',')));
-
-            case 2:
-              return _context5.abrupt("return", _context5.sent);
-
-            case 3:
-            case "end":
-              return _context5.stop();
-          }
-        }
-      }, _callee5);
-    }));
-
-    return function deleteResources(_x6) {
-      return _ref5.apply(this, arguments);
     };
   }();
 

@@ -7,9 +7,14 @@ use App\Http\Requests\StoreResourceRequest;
 use App\Http\Requests\UpdateResourceRequest;
 use App\Http\Resources\ResourceDataCollection;
 use App\Http\Resources\ResourceDataResource;
+use App\Models\Resource;
 use App\Services\Contracts\ResourceService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ResourceController extends Controller
 {
@@ -61,11 +66,6 @@ class ResourceController extends Controller
         $resource = $this->resourceService->viewResource($resourceId);
 
         return (new ResourceDataResource($resource))->toResponse($request);
-    }
-
-    public function download(string $resourceId)
-    {
-
     }
 
     /**
