@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Database\Factories\ResourceFactory;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -47,38 +46,5 @@ class Resource extends Model
             self::TYPE_LINK,
             self::TYPE_PDF,
         ];
-    }
-
-    /**
-     * Limit result to only resources that are of type: <code>self::TYPE_HTML</code>
-     *
-     * @param Builder $builder
-     * @return Builder
-     */
-    public function scopeOnlyHtml(Builder $builder): Builder
-    {
-        return $builder->where('resources.type', self::TYPE_HTML);
-    }
-
-    /**
-     * Limit result to only resources that are of type: <code>self::TYPE_LINK</code>
-     *
-     * @param Builder $builder
-     * @return Builder
-     */
-    public function scopeOnlyLink(Builder $builder): Builder
-    {
-        return $builder->where('resources.type', self::TYPE_LINK);
-    }
-
-    /**
-     * Limit result to only resources that are of type: <code>self::TYPE_PDF</code>
-     *
-     * @param Builder $builder
-     * @return Builder
-     */
-    public function scopeOnlyPdf(Builder $builder): Builder
-    {
-        return $builder->where('resources.type', self::TYPE_PDF);
     }
 }
