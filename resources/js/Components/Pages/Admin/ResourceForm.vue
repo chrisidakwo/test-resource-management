@@ -91,7 +91,7 @@
 
 <script setup>
 import {useForm} from "vue-hooks-form";
-import {toSentenceCase} from "../../../utils";
+import {getImgURL, toSentenceCase} from "../../../utils";
 import {computed, onMounted, ref} from 'vue'
 import FroalaEditor from "froala-editor/js/froala_editor.pkgd.min.js"
 import {isValidUrl} from "../../../utils/validators";
@@ -181,10 +181,30 @@ const file = useField('file', {
 
 const handleFileInput= ($event) => file.value = $event.target.files[0];
 
+const loadPDFile = (url) => {
+    if (url.length === 0) {
+        return;
+    }
+
+    getImgURL(url, (imgBlob) => {
+        let fileName = url.split('/').reverse()[0];
+
+        let pdf = new File([imgBlob], fileName,{ type: "application/pdf" });
+
+        let container = new DataTransfer();
+        container.items.add(pdf);
+
+        file.value = pdf;
+        document.querySelector('#pdf_file').files = container.files;
+    });
+}
+
 onMounted(() => {
     // Initialize
     initFroala();
-});
+
+    loadPDFile(props.data.file ?? '');
+})
 
 const signUpForm = computed(() => null === props.data)
 

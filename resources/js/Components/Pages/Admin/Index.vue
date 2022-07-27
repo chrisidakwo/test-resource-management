@@ -110,7 +110,7 @@
 
                                 <resource-form
                                     :data="resourceData.data"
-                                    @onCancel="setShowModal(false)"
+                                    @onCancel="handleCancelSubmit"
                                     @onFormSubmit="handleFormSubmit"
                                 />
                             </div>
@@ -219,6 +219,11 @@ const openCreateForm = () => {
 const handleEditResource = (event) => {
     resourceData.data = event.data;
     setShowModal(true);
+}
+
+const handleCancelSubmit = () => {
+    setShowModal(false);
+    setFlashMessage('');
 }
 
 const handleFormSubmit = (data) => {
