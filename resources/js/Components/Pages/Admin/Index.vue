@@ -1,5 +1,5 @@
 <template>
-    <div class="block mb-4 bg-green-600 p-4 w-full rounded-md" v-if="updateCompleted">
+    <div class="block mb-4 bg-green-600 p-4 w-full rounded-md" v-if="updateCompleted.length > 0">
         <h3 class="text-white font-semibold">Resource has been updated!</h3>
     </div>
 
@@ -9,6 +9,7 @@
         @onPageChanged="handlePageChanged"
         @onSelectedAllRows="handleSelectedRows"
         @onEditRow="handleEditResource"
+        @onDeleteRows="handleDestroyResources"
         :use-checkbox="true"
         :selected-rows-prop="selectedRows"
         max-height="600">
@@ -128,13 +129,13 @@ import {useState} from "../../../composables/useState";
 import EditForm from "./EditForm";
 
 // Composables
-const { resources, resourceData, getResources, updateResource, deleteResource, downloadResource } = useResources();
+const { resources, resourceData, getResources, updateResource, deleteResources, downloadResource } = useResources();
 
 // Properties
 const [page, setPage] = useState('1');
 const [selectedRows, setSelectedRows] = useState([]);
 const [showEditModal, setShowEditModal] = useState(false);
-const [updateCompleted, setUpdateCompleted] = useState(false);
+const [updateCompleted, setUpdateCompleted] = useState('');
 const submitErrorMessage = ref({
     summary: '',
     errors: '',
@@ -227,7 +228,7 @@ const handleFormSubmit = (data) => {
         getResources(page.value);
 
         // Show flash message
-        setUpdateCompleted(true);
+        setUpdateCompleted('Resource has been updated');
     }).catch((error) => {
         if (error.response.status === 422) {
             const errorMessage = error.response.data.message;
@@ -250,12 +251,14 @@ const download = (resourceId) => {
 
 }
 
-const destroyResource = (resourceId) => {
+const handleDestroyResources = (resources) => {
     if (!window.confirm('Are you sure you want to lose this record?')) {
         return;
     }
 
-    deleteResource(resourceId).then((response) => {
+    deleteResources(resources).then((response) => {
+        setUpdateCompleted('Resources have been deleted');
+
         getResources(page.value);
     });
 }

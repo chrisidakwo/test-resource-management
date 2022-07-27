@@ -65,14 +65,14 @@ const useResources = () => {
     /**
      * Delete resource.
      *
-     * @param {string} resourceId
+     * @param {string[]} resourceId
      * @returns {Promise<AxiosResponse<any>>}
      */
-    const deleteResource = async (resourceId) => {
-        return await apiClient.delete(`/api/resources/${resourceId}`);
+    const deleteResources = async (resources) => {
+        return await apiClient.delete(`/api/resources?resources=${resources.join(',')}`);
     }
 
-    return { resources, resourceData, getResources, downloadResource, updateResource, deleteResource };
+    return { resources, resourceData, getResources, downloadResource, updateResource, deleteResources };
 }
 
 export default useResources;

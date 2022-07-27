@@ -71,9 +71,9 @@ class ResourceService implements Contracts\ResourceService
     /**
      * @inheritDoc
      */
-    public function deleteResource(string $resourceId): ?bool
+    public function deleteResources(array $resources): ?bool
     {
-        return $this->findResource($resourceId)->delete();
+        return Resource::query()->whereIn('id', $resources)->delete();
     }
 
     /**

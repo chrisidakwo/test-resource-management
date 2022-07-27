@@ -81,12 +81,16 @@ class ResourceController extends Controller
     }
 
     /**
-     * @param string $resourceId
+     * @param Request $request
      * @return JsonResponse
      */
-    public function delete(string $resourceId): JsonResponse
+    public function delete(Request $request): JsonResponse
     {
-        $result = $this->resourceService->deleteResource($resourceId);
+        $resources = $request->query('resources', '');
+
+        $resources = explode(',', $resources);
+
+        $result = $this->resourceService->deleteResources($resources);
 
         return $this->response([], ($result) ? 204 : 500);
     }

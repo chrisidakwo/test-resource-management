@@ -39,9 +39,9 @@ interface ResourceService
     public function updateResource(string $resourceId, array $data): Resource;
 
     /**
-     * @param string $resourceId
+     * @param array $resources
      * @return bool|null
      * @throws RuntimeException
      */
-    public function deleteResource(string $resourceId): ?bool;
+    public function deleteResources(array $resources): ?bool;
 }

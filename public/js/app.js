@@ -20115,7 +20115,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
         resourceData = _useResources.resourceData,
         getResources = _useResources.getResources,
         updateResource = _useResources.updateResource,
-        deleteResource = _useResources.deleteResource,
+        deleteResources = _useResources.deleteResources,
         downloadResource = _useResources.downloadResource; // Properties
 
 
@@ -20134,7 +20134,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
         showEditModal = _useState6[0],
         setShowEditModal = _useState6[1];
 
-    var _useState7 = (0,_composables_useState__WEBPACK_IMPORTED_MODULE_5__.useState)(false),
+    var _useState7 = (0,_composables_useState__WEBPACK_IMPORTED_MODULE_5__.useState)(''),
         _useState8 = _slicedToArray(_useState7, 2),
         updateCompleted = _useState8[0],
         setUpdateCompleted = _useState8[1];
@@ -20235,7 +20235,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
         getResources(page.value); // Show flash message
 
-        setUpdateCompleted(true);
+        setUpdateCompleted('Resource has been updated');
       })["catch"](function (error) {
         if (error.response.status === 422) {
           var errorMessage = error.response.data.message;
@@ -20256,12 +20256,13 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
     var download = function download(resourceId) {};
 
-    var destroyResource = function destroyResource(resourceId) {
+    var handleDestroyResources = function handleDestroyResources(resources) {
       if (!window.confirm('Are you sure you want to lose this record?')) {
         return;
       }
 
-      deleteResource(resourceId).then(function (response) {
+      deleteResources(resources).then(function (response) {
+        setUpdateCompleted('Resources have been deleted');
         getResources(page.value);
       });
     };
@@ -20271,7 +20272,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
       resourceData: resourceData,
       getResources: getResources,
       updateResource: updateResource,
-      deleteResource: deleteResource,
+      deleteResources: deleteResources,
       downloadResource: downloadResource,
       page: page,
       setPage: setPage,
@@ -20290,7 +20291,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
       handleEditResource: handleEditResource,
       handleFormSubmit: handleFormSubmit,
       download: download,
-      destroyResource: destroyResource,
+      handleDestroyResources: handleDestroyResources,
       DataTable: _DataTable__WEBPACK_IMPORTED_MODULE_0__["default"],
       Copy: _icons_copy__WEBPACK_IMPORTED_MODULE_1__["default"],
       useResources: _composables_useResources__WEBPACK_IMPORTED_MODULE_2__["default"],
@@ -21082,12 +21083,13 @@ var _hoisted_35 = {
   "class": "text-white font-semibold"
 };
 function render(_ctx, _cache, $props, $setup, $data, $options) {
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, [$setup.updateCompleted ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, _hoisted_3)) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)($setup["DataTable"], {
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, [$setup.updateCompleted.length > 0 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, _hoisted_3)) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)($setup["DataTable"], {
     data: $setup.resources.data,
     pagination: $setup.resources.pagination,
     onOnPageChanged: $setup.handlePageChanged,
     onOnSelectedAllRows: $setup.handleSelectedRows,
     onOnEditRow: $setup.handleEditResource,
+    onOnDeleteRows: $setup.handleDestroyResources,
     "use-checkbox": true,
     "selected-rows-prop": $setup.selectedRows,
     "max-height": "600"
@@ -21549,19 +21551,19 @@ var useResources = function useResources() {
   /**
    * Delete resource.
    *
-   * @param {string} resourceId
+   * @param {string[]} resourceId
    * @returns {Promise<AxiosResponse<any>>}
    */
 
 
-  var deleteResource = /*#__PURE__*/function () {
-    var _ref5 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5(resourceId) {
+  var deleteResources = /*#__PURE__*/function () {
+    var _ref5 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5(resources) {
       return _regeneratorRuntime().wrap(function _callee5$(_context5) {
         while (1) {
           switch (_context5.prev = _context5.next) {
             case 0:
               _context5.next = 2;
-              return _utils_api__WEBPACK_IMPORTED_MODULE_1__["default"]["delete"]("/api/resources/".concat(resourceId));
+              return _utils_api__WEBPACK_IMPORTED_MODULE_1__["default"]["delete"]("/api/resources?resources=".concat(resources.join(',')));
 
             case 2:
               return _context5.abrupt("return", _context5.sent);
@@ -21574,7 +21576,7 @@ var useResources = function useResources() {
       }, _callee5);
     }));
 
-    return function deleteResource(_x6) {
+    return function deleteResources(_x6) {
       return _ref5.apply(this, arguments);
     };
   }();
@@ -21585,7 +21587,7 @@ var useResources = function useResources() {
     getResources: getResources,
     downloadResource: downloadResource,
     updateResource: updateResource,
-    deleteResource: deleteResource
+    deleteResources: deleteResources
   };
 };
 
