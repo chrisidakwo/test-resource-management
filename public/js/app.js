@@ -21485,7 +21485,6 @@ var useResources = function useResources() {
    *
    * @param {string} resourceId
    * @param {Object} data
-   * @returns {Promise<AxiosResponse<any>>}
    */
 
 
@@ -21519,9 +21518,6 @@ var useResources = function useResources() {
   }();
   /**
    * Delete resource.
-   *
-   * @param {string[]} resourceId
-   * @returns {Promise<AxiosResponse<any>>}
    */
 
 
@@ -21555,7 +21551,6 @@ var useResources = function useResources() {
     resourceData: resourceData,
     getResources: getResources,
     createResource: createResource,
-    downloadResource: downloadResource,
     updateResource: updateResource,
     deleteResources: deleteResources
   };
