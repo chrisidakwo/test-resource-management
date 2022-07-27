@@ -29,10 +29,9 @@ const useResources = () => {
      * Create a new resource.
      *
      * @param {Object} data
-     * @returns {Promise<AxiosResponse<any>>}
      */
     const createResource = async (data) => {
-        const response = await apiClient.post('/api/resources', data);
+        const response = await apiClient.post('/api/resources/create', data);
 
         resourceData.data = response.data;
     }
@@ -72,7 +71,7 @@ const useResources = () => {
         return await apiClient.delete(`/api/resources?resources=${resources.join(',')}`);
     }
 
-    return { resources, resourceData, getResources, downloadResource, updateResource, deleteResources };
+    return { resources, resourceData, getResources, createResource, downloadResource, updateResource, deleteResources };
 }
 
 export default useResources;

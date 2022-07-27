@@ -6,14 +6,15 @@
                 id="type"
                 class="form-select"
                 v-model="type.value"
-                :ref="type.ref"
-                aria-disabled="true"
-                disabled
+                :class="{'error': undefined !== type.error}"
+                aria-required="true"
+                required="required"
             >
                 <option value="html">HTML</option>
                 <option value="link">Link</option>
                 <option value="pdf">PDF</option>
             </select>
+            <span v-if="type.error" class="text-sm text-red-600">{{ toSentenceCase(type.error.message) }}</span>
         </div>
 
         <div class="mb-4">
@@ -62,7 +63,7 @@
                       v-model="description.value"
                       :ref="description.ref"
                       rows="7"
-                      :class="{'error': undefined !== title.error}"
+                      :class="{'error': undefined !== description.error}"
             ></textarea>
             <span v-if="description.error" class="text-sm text-red-600">{{ toSentenceCase(description.error.message) }}</span>
         </div>
@@ -79,30 +80,30 @@
         </div>
 
         <div class="px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-            <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-cyan-600 text-base font-medium text-white hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500 sm:ml-3 sm:w-auto sm:text-sm">Update Resource</button>
-            <button type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm" @click="cancelUpdateResource">Cancel</button>
+            <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-cyan-600 text-base font-medium text-white hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500 sm:ml-3 sm:w-auto sm:text-sm">
+                <span v-if="true === signUpForm">Create Resource</span>
+                <span v-else>Update Resource</span>
+            </button>
+            <button type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm" @click="cancelSubmit">Cancel</button>
         </div>
     </form>
 </template>
 
 <script setup>
 import {useForm} from "vue-hooks-form";
-import {getImgURL, toSentenceCase} from "../../../utils";
-import {onMounted, reactive, ref} from 'vue'
+import {toSentenceCase} from "../../../utils";
+import {computed, onMounted, ref} from 'vue'
 import FroalaEditor from "froala-editor/js/froala_editor.pkgd.min.js"
 import {isValidUrl} from "../../../utils/validators";
 
 const props = defineProps({
-    data: {
-        type: Object,
-        required: true,
-    }
+    data: Object
 });
 
 const emit = defineEmits(['onCancel', 'onFormSubmit']);
 
 const { useField, handleSubmit } = useForm({
-    defaultValues: { ...props.data },
+    defaultValues: props.data ? { ...props.data } : { },
 });
 
 const title = useField('title', {
@@ -164,7 +165,7 @@ const link = useField('link', {
     }
 });
 
-const link_target = ref(props.data.link_target === '_blank');
+const link_target = ref(props.data !== null && props.data.link_target === '_blank');
 
 const file = useField('file', {
     rule: {
@@ -178,35 +179,17 @@ const file = useField('file', {
     }
 })
 
-const handleFileInput= ($event) => {
-    file.value = $event.target.files[0];
-}
-
-const loadPDFile = (url) => {
-    getImgURL(url, (imgBlob) => {
-        let fileName = url.split('/').reverse()[0];
-
-        let pdf = new File([imgBlob], fileName,{ type: "application/pdf" });
-
-        let container = new DataTransfer();
-        container.items.add(pdf);
-
-        file.value = pdf;
-        document.querySelector('#pdf_file').files = container.files;
-    });
-}
+const handleFileInput= ($event) => file.value = $event.target.files[0];
 
 onMounted(() => {
     // Initialize
     initFroala();
+});
 
-    if (null !== props.data.file) {
-        loadPDFile(props.data.file);
-    }
-})
+const signUpForm = computed(() => null === props.data)
 
 // Cancel update resource
-const cancelUpdateResource = () => {
+const cancelSubmit = () => {
     emit('onCancel');
 }
 
@@ -214,6 +197,10 @@ const submitForm = () => {
     const data = {
         title: title.value,
         type: type.value,
+    }
+
+    if (null !== props.data) {
+        data.id = props.data.id;
     }
 
     if (type.value === 'html') {

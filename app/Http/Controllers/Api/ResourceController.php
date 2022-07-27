@@ -75,7 +75,7 @@ class ResourceController extends Controller
      */
     public function update(UpdateResourceRequest $request, string $resourceId): JsonResponse
     {
-        $resource = $this->resourceService->updateResource($resourceId, $request->except(['_method', 'type']));
+        $resource = $this->resourceService->updateResource($resourceId, $request->except(['_method', 'type', 'id']));
 
         return (new ResourceDataResource($resource))->toResponse($request);
     }

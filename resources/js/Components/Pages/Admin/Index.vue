@@ -1,6 +1,10 @@
 <template>
-    <div class="block mb-4 bg-green-600 p-4 w-full rounded-md" v-if="updateCompleted.length > 0">
-        <h3 class="text-white font-semibold">Resource has been updated!</h3>
+    <div class="block mb-4 bg-green-600 p-4 w-full rounded-md" v-if="flashMessage.length > 0">
+        <h3 class="text-white font-semibold">{{ flashMessage }}</h3>
+    </div>
+
+    <div class="block w-full mb-4">
+        <button class="btn btn-primary" type="button" @click="openCreateForm">New Resource</button>
     </div>
 
     <data-table
@@ -89,8 +93,8 @@
         </template>
     </data-table>
 
-    <!-- This example requires Tailwind CSS v2.0+ -->
-    <div v-if="showEditModal" class="relative z-10" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+
+    <div v-if="showModal" class="relative z-10" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
 
         <div class="fixed z-10 inset-0 overflow-y-auto">
@@ -105,9 +109,9 @@
                                     <h3 class="text-white font-semibold">{{ submitErrorMessage.summary }}</h3>
                                 </div>
 
-                                <edit-form
+                                <resource-form
                                     :data="resourceData.data"
-                                    @onCancel="setShowEditModal(false)"
+                                    @onCancel="setShowModal(false)"
                                     @onFormSubmit="handleFormSubmit"
                                 />
                             </div>
@@ -126,16 +130,24 @@ import useResources from "../../../composables/useResources";
 import {onMounted, ref} from "vue";
 import {copyToClipboard, externalRedirect} from "../../../utils";
 import {useState} from "../../../composables/useState";
-import EditForm from "./EditForm";
+import ResourceForm from "./ResourceForm";
 
 // Composables
-const { resources, resourceData, getResources, updateResource, deleteResources, downloadResource } = useResources();
+const {
+    resources,
+    resourceData,
+    getResources,
+    createResource,
+    updateResource,
+    deleteResources,
+    downloadResource
+} = useResources();
 
 // Properties
 const [page, setPage] = useState('1');
 const [selectedRows, setSelectedRows] = useState([]);
-const [showEditModal, setShowEditModal] = useState(false);
-const [updateCompleted, setUpdateCompleted] = useState('');
+const [showModal, setShowModal] = useState(false);
+const [flashMessage, setFlashMessage] = useState('');
 const submitErrorMessage = ref({
     summary: '',
     errors: '',
@@ -200,15 +212,20 @@ const handleSelectedRows = (rows) => {
     setSelectedRows(rows);
 }
 
+const openCreateForm = () => {
+    resourceData.data = null;
+
+    setShowModal(true);
+}
+
 const handleEditResource = (event) => {
     resourceData.data = event.data;
-    setShowEditModal(true);
+    setShowModal(true);
 }
 
 const handleFormSubmit = (data) => {
     // Hack to get this damn thing submitting with the file! :(
     const formData = new FormData();
-    formData.set('_method', 'put');
 
     if (data.file) {
         const file = data.file;
@@ -221,25 +238,48 @@ const handleFormSubmit = (data) => {
         formData.set(value, data[value]);
     });
 
-    updateResource(resourceData.data.id, formData).then((result) => {
-        setShowEditModal(false);
+    if (undefined !== data.id) {
+        formData.set('_method', 'put');
+        updateResource(resourceData.data.id, formData).then((result) => {
+            setShowModal(false);
 
-        // Refetch resources
-        getResources(page.value);
+            // Refetch resources
+            getResources(page.value);
 
-        // Show flash message
-        setUpdateCompleted('Resource has been updated');
-    }).catch((error) => {
-        if (error.response.status === 422) {
-            const errorMessage = error.response.data.message;
-            const errors = error.response.data.errors;
+            // Show flash message
+            setFlashMessage('Resource has been updated');
+        }).catch((error) => {
+            if (error.response.status === 422) {
+                const errorMessage = error.response.data.message;
+                const errors = error.response.data.errors;
 
-            submitErrorMessage.value = {
-                summary: errorMessage,
-                errors: errors,
-            };
-        }
-    })
+                submitErrorMessage.value = {
+                    summary: errorMessage,
+                    errors: errors,
+                };
+            }
+        })
+    } else {
+        createResource(formData).then((result) => {
+            setShowModal(false);
+
+            // Refetch resources
+            getResources(page.value);
+
+            // Show flash message
+            setFlashMessage('Resource has been added');
+        }).catch((error) => {
+            if (error.response.status === 422) {
+                const errorMessage = error.response.data.message;
+                const errors = error.response.data.errors;
+
+                submitErrorMessage.value = {
+                    summary: errorMessage,
+                    errors: errors,
+                };
+            }
+        })
+    }
 }
 
 /**
@@ -252,12 +292,12 @@ const download = (resourceId) => {
 }
 
 const handleDestroyResources = (resources) => {
-    if (!window.confirm('Are you sure you want to lose this record?')) {
+    if (!window.confirm('Are you sure you want to lose these records?')) {
         return;
     }
 
     deleteResources(resources).then((response) => {
-        setUpdateCompleted('Resources have been deleted');
+        setFlashMessage('Resources have been deleted');
 
         getResources(page.value);
     });
